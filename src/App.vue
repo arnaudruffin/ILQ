@@ -2,10 +2,14 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-card elevation="2" shaped class="mx-auto my-12" max-width="374">
-          <v-card-title>Dose équivalente biologique: </v-card-title>
-          <p class="text-center font-weight-black">{{ result }}</p>
+        <v-alert dense outlined type="error">
+          I'm a dense alert with the <strong>outlined</strong> prop and a
+          <strong>type</strong> of error
+        </v-alert>
 
+        <v-card elevation="2">
+          <v-card-title>Calculateur d'équivalent de dose</v-card-title>
+          <v-card-subtitle>Modèle linéaire quadratique</v-card-subtitle>
           <v-card-text>
             <v-form ref="form">
               <v-select
@@ -33,6 +37,8 @@
               ></v-text-field>
               <v-text-field
                 type="number"
+                min="1"
+                max="6"
                 v-model="dfi"
                 label="Dose par fraction initiale"
               ></v-text-field>
@@ -40,16 +46,32 @@
                 type="number"
                 step="any"
                 v-model="dfs"
+                min="1"
+                max="6"
                 label="Dose par fraction souhaitées"
               ></v-text-field>
             </v-form>
+
+            Dose équivalente biologique:
+            <p class="text-center font-weight-black">{{ result }}
+                       <v-chip v-if="result" class="ma-2 text-center font-weight-black" color="green" text-color="white" x-large>
+              {{ result }}
+            </v-chip>
+            </p>
+
+   
           </v-card-text>
         </v-card>
 
         <v-banner>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-          cursus nec sem id malesuada. Curabitur lacinia sem et turpis euismod,
-          eget elementum ex pretium.
+          Le calculateur peut être utilisé dans les conditions suivantes (accord
+          experts SFRO) :
+          <ul>
+            <li>Dose par fraction comprise entre 1 et 6 Gy</li>
+
+            <li>Deux séances doivent être espacées d'au moins 6 à 8 heures</li>
+            <li>Étalement constant</li>
+          </ul>
           <template v-slot:actions>
             <v-btn text color="primary"> Dismiss </v-btn>
             <v-btn text color="primary"> Retry </v-btn>
@@ -80,7 +102,9 @@ export default class App extends Vue {
   get result(): number | null {
     if (this.selectedOrgan && this.dfs && this.dfi && this.dt) {
       //TODO animate on new rendering
-
+      //TODO afficher les GY
+      //TODO show warn as overlay
+      //TODO handler errot messag
       const organevalue = this.selectedOrgan!.value;
       const dosefraction1 = this.dfi!;
       const dosefraction2 = this.dfs!;

@@ -19,6 +19,15 @@
           <v-card-title>Calculateur d'équivalent de dose</v-card-title>
           <v-card-subtitle>Modèle linéaire quadratique</v-card-subtitle>
           <v-card-text>
+            <p v-if="result" class="text-center font-weight-black">
+            Dose équivalente biologique:
+            </p>
+            <p class="text-center font-weight-black">
+              <v-chip v-if="result" class="ma-2 text-center font-weight-black" color="green" text-color="white" x-large>
+                {{ result }}
+              </v-chip>
+            </p>
+
             <v-form ref="form">
               <v-select
                   type="number"
@@ -60,12 +69,7 @@
               ></v-text-field>
             </v-form>
 
-            Dose équivalente biologique:
-            <p class="text-center font-weight-black">{{ result }}
-              <v-chip v-if="result" class="ma-2 text-center font-weight-black" color="green" text-color="white" x-large>
-                {{ result }}
-              </v-chip>
-            </p>
+
 
 
           </v-card-text>
@@ -116,13 +120,13 @@ export default class App extends Vue {
 
 
     if (this.dfi && (this.dfi > 8 || this.dfi < 1)) {
-      this.ddError = "Vous sortez des limites du modèle pour la <strong>dose initiale</strong>, les doses calculées par le modèle ne peuvent être considérées comme valides."
+      this.ddError = "Vous sortez des limites du modèle pour la dose initiale, les doses calculées par le modèle ne peuvent être considérées comme valides."
     } else {
       this.ddError = null
     }
 
     if (this.dfs && (this.dfs > 8 || this.dfs < 1)) {
-      this.diError = "Vous sortez des limites du modèle pour la <strong>dose désirée</strong>, les doses calculées par le modèle ne peuvent être considérées comme valides."
+      this.diError = "Vous sortez des limites du modèle pour la dose désirée, les doses calculées par le modèle ne peuvent être considérées comme valides."
     } else {
       this.diError = null
     }

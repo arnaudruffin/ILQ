@@ -20,7 +20,7 @@
           <v-card-subtitle>Modèle linéaire quadratique</v-card-subtitle>
           <v-card-text>
             <p v-if="result" class="text-center font-weight-black">
-            Dose équivalente biologique:
+              Dose équivalente biologique:
             </p>
             <p class="text-center font-weight-black">
               <v-chip v-if="result" class="ma-2 text-center font-weight-black" color="green" text-color="white" x-large>
@@ -70,25 +70,27 @@
             </v-form>
 
 
-
-
           </v-card-text>
+          <v-overlay :absolute="true" opacity="0.9"  :value="overlay">
+            Le calculateur peut être utilisé dans les conditions suivantes (accord
+            experts SFRO) :
+            <ul>
+              <li>Dose par fraction comprise entre 1 et 6 Gy</li>
+
+              <li>Deux séances doivent être espacées d'au moins 6 à 8 heures</li>
+              <li>Étalement constant</li>
+            </ul>
+
+            <v-btn
+                color="success"
+                @click="overlay = false"
+            >
+            OK
+            </v-btn>
+          </v-overlay>
         </v-card>
 
-        <v-banner>
-          Le calculateur peut être utilisé dans les conditions suivantes (accord
-          experts SFRO) :
-          <ul>
-            <li>Dose par fraction comprise entre 1 et 6 Gy</li>
 
-            <li>Deux séances doivent être espacées d'au moins 6 à 8 heures</li>
-            <li>Étalement constant</li>
-          </ul>
-          <template v-slot:actions>
-            <v-btn text color="primary"> Dismiss</v-btn>
-            <v-btn text color="primary"> Retry</v-btn>
-          </template>
-        </v-banner>
       </v-container>
     </v-main>
   </v-app>
@@ -111,6 +113,8 @@ export default class App extends Vue {
   organError: string | null = null;
   ddError: string | null = null;
   diError: string | null = null;
+
+  overlay = true;
 
   showAlert(message: string) {
     console.log(message);

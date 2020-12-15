@@ -3,32 +3,28 @@
     <v-main>
       <v-container>
 
-        <v-alert dense outlined type="error" v-if="diError">
-          {{ diError }}
-        </v-alert>
-
-        <v-alert dense outlined type="error" v-if="ddError">
-          {{ ddError }}
-        </v-alert>
-
-        <v-alert dense outlined type="error" v-if="organError">
-          {{ organError }}
-        </v-alert>
 
         <v-card elevation="2">
           <v-card-title>Calculateur d'équivalent de dose</v-card-title>
           <v-card-subtitle>Modèle linéaire quadratique</v-card-subtitle>
           <v-card-text>
-            <p v-if="result" class="text-center font-weight-black">
+            <p v-if="result && valid" class="text-center font-weight-black">
               Dose équivalente biologique:
             </p>
             <p class="text-center font-weight-black">
-              <v-chip v-if="result" class="ma-2 text-center font-weight-black" color="green" text-color="white" x-large>
+              <v-chip v-if="result && valid"
+                      class="ma-2 text-center font-weight-black"
+                      :color="chipColor" text-color="white"
+                      x-large>
                 {{ result }}
               </v-chip>
             </p>
 
-            <v-form ref="form">
+            <v-alert dense outlined type="error" v-if="organError && valid">
+              {{ organError }}
+            </v-alert>
+
+            <v-form ref="form" v-model="valid">
               <v-select
                   type="number"
                   v-model="selectedOrgan"
@@ -57,6 +53,7 @@
                   min="1"
                   max="6"
                   v-model="dfi"
+                  :rules="dfiRule"
                   label="Dose par fraction initiale"
               ></v-text-field>
               <v-text-field
@@ -65,13 +62,14 @@
                   v-model="dfs"
                   min="1"
                   max="6"
+                  :rules="dfsRule"
                   label="Dose par fraction souhaitées"
               ></v-text-field>
             </v-form>
 
 
           </v-card-text>
-          <v-overlay :absolute="true" opacity="0.9"  :value="overlay">
+          <v-overlay :absolute="true" opacity="0.9" :value="overlay">
             Le calculateur peut être utilisé dans les conditions suivantes (accord
             experts SFRO) :
             <ul>
@@ -85,7 +83,7 @@
                 color="success"
                 @click="overlay = false"
             >
-            OK
+              OK
             </v-btn>
           </v-overlay>
         </v-card>
@@ -105,35 +103,39 @@ import Organ, {ALL_ORGANS} from "./bean/Organ";
 export default class App extends Vue {
   private organs: Organ[] = ALL_ORGANS;
   selectedOrgan: Organ | null = null;
+  valid = false;
 
   dt: number | null = null;
   dfi: number | null = null;
   dfs: number | null = null;
 
   organError: string | null = null;
-  ddError: string | null = null;
-  diError: string | null = null;
 
   overlay = true;
 
-  showAlert(message: string) {
-    console.log(message);
+  dfiRule = [
+    (v: number) => {
+      return (1 <= v && v <= 8) || "Vous sortez des limites du modèle pour la dose initiale, les doses calculées par le modèle ne peuvent être considérées comme valides.";
+    }
+  ];
+
+  dfsRule = [
+    (v: number) => {
+      return (1 <= v && v <= 8) || "Vous sortez des limites du modèle pour la dose désirée, les doses calculées par le modèle ne peuvent être considérées comme valides.";
+    }
+  ];
+
+  get chipColor(): string {
+    if (this.organError) {
+      return "red"
+    } else {
+      return "green"
+    }
   }
+
 
   get result(): number | null {
 
-
-    if (this.dfi && (this.dfi > 8 || this.dfi < 1)) {
-      this.ddError = "Vous sortez des limites du modèle pour la dose initiale, les doses calculées par le modèle ne peuvent être considérées comme valides."
-    } else {
-      this.ddError = null
-    }
-
-    if (this.dfs && (this.dfs > 8 || this.dfs < 1)) {
-      this.diError = "Vous sortez des limites du modèle pour la dose désirée, les doses calculées par le modèle ne peuvent être considérées comme valides."
-    } else {
-      this.diError = null
-    }
 
     if (this.selectedOrgan && this.dfs && this.dfi && this.dt) {
       //TODO animate on new rendering
@@ -151,7 +153,7 @@ export default class App extends Vue {
 
       // verifier contraintes organe
       if (this.selectedOrgan.doseMax && doseEquivalente > this.selectedOrgan.doseMax) {
-        this.organError = "Le guide des procédures de radiothérapie externe recommande de ne pas dépasser " + this.selectedOrgan.doseMax + " Gy en dose totale pour cet organe. (" + this.selectedOrgan.name + ")";
+        this.organError = "Le guide des procédures de radiothérapie externe recommande de ne pas dépasser " + this.selectedOrgan.doseMax + " Gy en dose totale pour cet organe (" + this.selectedOrgan.name + ")";
       } else {
         this.organError = null
       }

@@ -2,6 +2,15 @@
   <v-app>
     <v-main>
       <v-container>
+        <v-slide-y-transition>
+        <v-banner v-if="deferredPrompt" color="info" dark class="text-center"  transition="scale-transition">
+          Installez l'application, cela vous permettra d'utiliser ILQ même sans réseau.
+          <template v-slot:actions>
+            <v-btn text @click="dismiss">Pas la peine</v-btn>
+            <v-btn text @click="install">Installer</v-btn>
+          </template>
+        </v-banner>
+        </v-slide-y-transition>
 
 
         <v-card elevation="2">
@@ -111,7 +120,9 @@ export default class App extends Vue {
 
   organError: string | null = null;
 
-  overlay = true;
+  deferredPrompt: any | null = null
+
+  overlay = false;
 
   dfiRule = [
     (v: number) => {
@@ -124,6 +135,24 @@ export default class App extends Vue {
       return (1 <= v && v <= 8) || "Vous sortez des limites du modèle pour la dose désirée, les doses calculées par le modèle ne peuvent être considérées comme valides.";
     }
   ];
+
+  created() {
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+    })
+    window.addEventListener("appinstalled", () => {
+      this.deferredPrompt = null;
+    })
+  }
+
+  async dismiss(){
+    this.deferredPrompt = null;
+  }
+
+  async install(){
+    this.deferredPrompt?.prompt();
+  }
 
   get chipColor(): string {
     if (this.organError) {
@@ -140,16 +169,9 @@ export default class App extends Vue {
     if (this.selectedOrgan && this.dfs && this.dfi && this.dt) {
       //TODO animate on new rendering
       //TODO afficher les GY
-      //TODO show warn as overlay
-      //TODO handler errot messag
+      //TODO layout full screen card
       const organValue = this.selectedOrgan.value;
-      console.log(organValue);
-      console.log(this.dfi);
-      console.log(this.dfs);
-      console.log(this.dt);
-
       const doseEquivalente = (this.dt * (organValue + +this.dfi)) / (organValue + +this.dfs);
-
 
       // verifier contraintes organe
       if (this.selectedOrgan.doseMax && doseEquivalente > this.selectedOrgan.doseMax) {

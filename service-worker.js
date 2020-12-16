@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/ILQ/precache-manifest.dab56f678c6a0bbe974a4d10a94e8156.js"
+  "/ILQ/precache-manifest.6fcad9efa71a5a746e3be68ebbabc466.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "ilq"});

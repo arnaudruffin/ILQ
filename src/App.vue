@@ -1,7 +1,17 @@
+<!--
+  - Copyright 2020 Arnaud Ruffin (arnaud.ruffin@orange.com)
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  -->
+
 <template>
   <v-app>
     <v-main>
-      <v-container>
+      <v-container fluid fill-height >
         <v-slide-y-transition>
           <v-banner v-if="deferredPrompt" color="info" dark class="text-center" transition="scale-transition">
             Installez l'application, cela vous permettra d'utiliser ILQ même sans réseau.
@@ -13,16 +23,22 @@
         </v-slide-y-transition>
 
 
-        <v-card elevation="2">
-          <v-card-title>Calculateur d'équivalent de dose</v-card-title>
-          <v-card-subtitle>Modèle linéaire quadratique</v-card-subtitle>
+        <v-layout
+            justify-center
+            align-center
+        >
+          <v-flex text-xs-center style="height:100%">
+
+        <v-card elevation="2"  height="100%">
+          <v-card-title  class="justify-center">Calculateur d'équivalent de dose</v-card-title>
+          <v-card-subtitle class="text-center">Modèle linéaire quadratique</v-card-subtitle>
           <v-card-text>
             <p v-if="result && valid" class="text-center font-weight-black">
               Dose équivalente biologique:
             </p>
             <p class="text-center font-weight-black">
               <v-chip v-if="result && valid"
-                      class="ma-2 text-center font-weight-black"
+                      class="text-center font-weight-black"
                       :color="chipColor" text-color="white"
                       x-large>
                 {{ result }}
@@ -35,12 +51,13 @@
 
             <v-form ref="form" v-model="valid">
               <v-select
+                  dense
                   type="number"
                   v-model="selectedOrgan"
                   :hint="
                   selectedOrgan
-                    ? `${selectedOrgan.name},⍺β: ${selectedOrgan.value}`
-                    : 'organe'
+                    ? `${selectedOrgan.name}  :  ⍺β=${selectedOrgan.value}`
+                    : ''
                 "
                   :items="organs"
                   item-text="name"
@@ -49,23 +66,27 @@
                   persistent-hint
                   return-object
                   single-line
+                  append-outer-icon="mdi-stomach"
+                  ma-12
               ></v-select>
 
-              <v-text-field
+              <v-text-field ma-12
                   v-model="dt"
                   step="any"
                   type="number"
                   label="Dose totale"
+                  suffix="GY"
               ></v-text-field>
-              <v-text-field
+              <v-text-field ma-12
                   type="number"
                   min="1"
                   max="6"
                   v-model="dfi"
                   :rules="dfiRule"
                   label="Dose par fraction initiale"
+                  suffix="GY"
               ></v-text-field>
-              <v-text-field
+              <v-text-field ma-12
                   type="number"
                   step="any"
                   v-model="dfs"
@@ -73,6 +94,7 @@
                   max="6"
                   :rules="dfsRule"
                   label="Dose par fraction souhaitées"
+                  suffix="GY"
               ></v-text-field>
             </v-form>
 
@@ -97,6 +119,8 @@
           </v-overlay>
         </v-card>
 
+          </v-flex>
+        </v-layout>
 
       </v-container>
     </v-main>
@@ -175,9 +199,8 @@ export default class App extends Vue {
 
 
     if (this.selectedOrgan && this.dfs && this.dfi && this.dt) {
-      //TODO animate on new rendering
-      //TODO afficher les GY
-      //TODO layout full screen card
+      //TODO a propos qui redirige vers sources et readme
+      //TODO logo titre
       const organValue = this.selectedOrgan.value;
       const doseEquivalente = (this.dt * (organValue + +this.dfi)) / (organValue + +this.dfs);
 

@@ -1,24 +1,13 @@
-# ilq
+# ILQ
 
-## Project setup
-```
-npm install
-```
+Sources for a progressive web app for ILQ hosted on https://arnaudruffin.github.io/ILQ/
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+# what's ILQ 
+see http://www.sfjro.fr/ilq/fr/
 
-### Compiles and minifies for production
-```
-npm run build
-```
+# inspiration
+reversed engineered from http://www.sfjro.fr/ilq/fr/ tools. Just wrapped in a more modern and easy to install way.
 
-### Lints and fixes files
-```
-npm run lint
-```
+# licence 
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+https://opensource.org/licenses/MIT

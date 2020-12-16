@@ -3,13 +3,13 @@
     <v-main>
       <v-container>
         <v-slide-y-transition>
-        <v-banner v-if="deferredPrompt" color="info" dark class="text-center"  transition="scale-transition">
-          Installez l'application, cela vous permettra d'utiliser ILQ même sans réseau.
-          <template v-slot:actions>
-            <v-btn text @click="dismiss">Pas la peine</v-btn>
-            <v-btn text @click="install">Installer</v-btn>
-          </template>
-        </v-banner>
+          <v-banner v-if="deferredPrompt" color="info" dark class="text-center" transition="scale-transition">
+            Installez l'application, cela vous permettra d'utiliser ILQ même sans réseau.
+            <template v-slot:actions>
+              <v-btn text @click="dismiss">Pas la peine</v-btn>
+              <v-btn text @click="install">Installer</v-btn>
+            </template>
+          </v-banner>
         </v-slide-y-transition>
 
 
@@ -107,6 +107,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import Organ, {ALL_ORGANS} from "./bean/Organ";
+import Cookies from "js-cookie"
 
 @Component
 export default class App extends Vue {
@@ -119,7 +120,6 @@ export default class App extends Vue {
   dfs: number | null = null;
 
   organError: string | null = null;
-
   deferredPrompt: any | null = null
 
   overlay = false;
@@ -139,18 +139,21 @@ export default class App extends Vue {
   created() {
     window.addEventListener("beforeinstallprompt", e => {
       e.preventDefault();
-      this.deferredPrompt = e;
+      if (Cookies.get("install-prompt") === undefined) {
+        this.deferredPrompt = e;
+      }
     })
     window.addEventListener("appinstalled", () => {
       this.deferredPrompt = null;
     })
   }
 
-  async dismiss(){
+  async dismiss() {
+    Cookies.set("install-prompt", "damned", {expires: 5})
     this.deferredPrompt = null;
   }
 
-  async install(){
+  async install() {
     this.deferredPrompt?.prompt();
   }
 

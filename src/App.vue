@@ -139,21 +139,26 @@ export default class App extends Vue {
   created() {
     window.addEventListener("beforeinstallprompt", e => {
       e.preventDefault();
+      console.log("before instll prompt");
       if (Cookies.get("install-prompt") === undefined) {
         this.deferredPrompt = e;
+        console.log("before instll prompt -- no cookie so deferring");
       }
     })
     window.addEventListener("appinstalled", () => {
+      console.log("app installed");
       this.deferredPrompt = null;
     })
   }
 
   async dismiss() {
+    console.log("dismiss");
     Cookies.set("install-prompt", "damned", {expires: 5})
     this.deferredPrompt = null;
   }
 
   async install() {
+    console.log("install");
     this.deferredPrompt?.prompt();
   }
 

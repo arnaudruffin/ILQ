@@ -11,8 +11,8 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid fill-height >
-        <v-slide-y-transition>
+      <v-container fluid >
+
           <v-banner v-if="deferredPrompt" color="info" dark class="text-center" transition="scale-transition">
             Installez l'application, cela vous permettra d'utiliser ILQ même sans réseau.
             <template v-slot:actions>
@@ -20,14 +20,8 @@
               <v-btn text @click="install">Installer</v-btn>
             </template>
           </v-banner>
-        </v-slide-y-transition>
 
 
-        <v-layout
-            justify-center
-            align-center
-        >
-          <v-flex text-xs-center style="height:100%">
 
         <v-card elevation="2"  height="100%">
           <v-card-title  class="justify-center">Calculateur d'équivalent de dose</v-card-title>
@@ -119,8 +113,6 @@
           </v-overlay>
         </v-card>
 
-          </v-flex>
-        </v-layout>
 
       </v-container>
     </v-main>

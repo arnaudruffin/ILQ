@@ -114,6 +114,7 @@
         </v-card>
 
 
+<About></About>
       </v-container>
     </v-main>
   </v-app>
@@ -124,8 +125,11 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import Organ, {ALL_ORGANS} from "./bean/Organ";
 import Cookies from "js-cookie"
+import About from "@/About.vue";
 
-@Component
+@Component({
+  components: {About}
+})
 export default class App extends Vue {
   private organs: Organ[] = ALL_ORGANS;
   selectedOrgan: Organ | null = null;
